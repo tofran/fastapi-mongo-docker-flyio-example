@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    depends_on:
+      - db
+    networks:
+      - backend_network
+    environment:
+      MONGO_URL: mongodb://root_user:root_password@db:27017
+      MONGO_DB: sample
+    volumes:
+      - .:/project
+    ports:
+      - 8000:8000
+
+  prod:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.prod
+    depends_on:
+      - db
+    networks:
+      - backend_network
+    environment:
+      MONGO_URL: mongodb://root_user:root_password@db:27017
+      MONGO_DB: sample
+    ports:
+      - 8000:8000
+
+  db:
+    image: mongo:6.0.3
+    ports:
+      - 27017:27017
+    networks:
+      - backend_network
+    environment:
+      MONGO_INITDB_DATABASE: sample
+      MONGO_INITDB_ROOT_USERNAME: root_user
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+    volumes:
+      - mongodbdata:/data/db
+
+volumes:
+  mongodbdata:
+
+networks:
+ backend_network:

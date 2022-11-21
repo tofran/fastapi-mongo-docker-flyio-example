@@ -15,10 +15,8 @@ pytestmark = pytest.mark.anyio
         ),
     ),
 )
-# Test document create endpoint
+
 async def test_add_document(client: AsyncClient, payload: dict, status_code: int):
-    # Send POST request
     response = await client.post("/api/v1/vegs", json=payload)
-    # Assert HTTP code and if received document id is valid
     assert response.status_code == status_code
     assert ObjectId.is_valid(response.json()["id"])

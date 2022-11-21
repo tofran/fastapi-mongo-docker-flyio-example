@@ -4,26 +4,26 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-isort = "*"
-mypy = "*"
-flake8 = "*"
-black = "*"
 fastapi = "*"
-uvicorn = {extras = ["standard"], version = "*"}
+httpx = "*"
 motor = "*"
+mypy = "*"
 pydantic = "*"
+pymongo = "*"
 pytest = "*"
 pytest-cov = "*"
-httpx = "*"
-icecream = "*"
 rich = "*"
-safety = "*"
-pyupgrade = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
+flake8 = "*"
+icecream = "*"
+isort = "*"
+pycodestyle = "*"
+pipenv = "*"
 
 [requires]
 python_version = "3.10"
 
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false

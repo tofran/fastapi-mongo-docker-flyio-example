@@ -1,49 +1,70 @@
-.PHONY: help
 help: ## Show this help
-	@egrep -h '\s##\s' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@egrep -h '\s##\s' $(MAKEFILE_LIST) | sort | \
+	awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-21s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: build
-build:	## Build project with compose
+
+# Host development scripts (docker-compose)
+
+build: ## Build the develpment environment with docker-compose
 	docker-compose build
 
-.PHONY: up
-up:	## Run project with compose
-	docker-compose up
+develop: ## Start the development server with docker
+	docker-compose run --service-ports -- dev
 
-.PHONY: down
-down: ## Reset project containers with compose
-	docker-compose down -v --remove-orphans
+shell: ## Get a shell inside a new development container
+	docker-compose run --service-ports -- dev bash
 
-.PHONY: lock
-lock:	## Refresh pipfile.lock
-	pipenv lock --pre
+down: ## Delete docker-compose containers and volumes
+	docker-compose down --remove-orphans --volumes
 
-.PHONY: requirements
-requirements:	## Refresh requirements.txt from pipfile.lock
-	pipenv lock --requirements --dev >| requirements.txt
+dc-lint: ## Using docker-compose, ensures the code is properlly formatted
+	docker-compose run --service-ports -- dev make lint
 
-.PHONY: test
-test:	## Run project tests
-	docker-compose run --rm web pytest -vv
+# General app scripts
 
-.PHONY: lint
-lint:	## Linter project code.
-	isort  -rc -m 3 --tc .
-	black --line-length=120 .
+start-dev: ## Start a production ready server
+	uvicorn app.main:app \
+		--host 0.0.0.0 \
+		--port 8000 \
+		--lifespan=on \
+		--use-colors \
+		--loop uvloop \
+		--http httptools \
+		--reload
 
-.PHONY: mypy
-mypy:	## mypy check.
-	mypy --ignore-missing-imports .
+start-prod: ## Start a production ready server
+	uvicorn app.main:app \
+		--host 0.0.0.0 \
+		--port 8000 \
+		--lifespan=on \
+		--loop uvloop \
+		--http httptools
 
-.PHONY: flake8
-flake8:  ## flake8 check.
-	flake8 .
 
-.PHONY: safety
-safety:  ## apply safety check in project.
-	safety check
+# Codestyle scripts
 
-.PHONY: format
-format:  ## format project code.
-	isort -rc -m 3 --tc .
-	black --line-length=120 .
+lint: ## Ensures the code is properlly formatted
+	pycodestyle app
+	isort --settings-path=./setup.cfg --check-only app
+
+format:  ## format the code accordig to the configuration
+	autopep8 -ir app
+	isort --settings-path=./setup.cfg app
+
+
+# Pipenv scripts - dependency management
+
+lock: ## Refresh pipfile.lock
+	pipenv lock
+
+requirements: ## Refresh requirements.txt from pipfile.lock
+	pipenv requirements > requirements.txt
+
+requirements_dev: ## Refresh requirements.txt from pipfile.lock
+	pipenv requirements --dev > requirements-dev.txt
+
+
+# Testing scripts
+
+# test: ## Run project tests
+# 	docker-compose run --rm web pytest -vv

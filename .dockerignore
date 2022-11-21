@@ -1,0 +1,13 @@
+Dockerfile.dev
+docker-compose.yaml
+
+.github
+.git
+.env
+env
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+LICENSE

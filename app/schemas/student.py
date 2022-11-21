@@ -17,8 +17,7 @@ class ObjectIdField(str):
 
 
 class Document(BaseModel):
-    name: str = Field(...)
-    desc: str = Field(...)
+    name: str = Field(default="Sample name")
 
     class Config:
         allow_population_by_field_name = True
