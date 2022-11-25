@@ -12,6 +12,7 @@ services:
     environment:
       MONGO_URL: mongodb://root_user:root_password@db:27017
       MONGO_DB: sample
+      TEST_MONGO_DB: sample_test
     volumes:
       - .:/project
     ports:

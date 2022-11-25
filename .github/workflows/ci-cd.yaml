@@ -36,11 +36,12 @@ jobs:
 
       - run: make lint
 
-      # TODO: Tests
-      # - run: pytest
-      #   env:
-      #     PYTHONUNBUFFERED: 1
-      #     MONGO_URL: mongodb://user:pass@127.0.0.1:27017/?retryWrites=true&w=majority
+      - name: test
+        env:
+          PYTHONUNBUFFERED: 1
+          MONGO_URL: mongodb://user:pass@127.0.0.1:27017
+          TEST_MONGO_DB: test_db
+        run: pytest -vv
 
   deploy:
     name: Deploy

@@ -1,4 +1,4 @@
-# FastAPI + MongoDB + Docker + Fly.io with CI/CD
+# FastAPI + MongoDB + Docker + Fly.io with CI/CD and tests
 
 This is a very opinionated example repository for a python backend API. It is not a template as it contains a few things already as an example for how to build something from here.
 

@@ -2,22 +2,37 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from app import config
 
-_MONGODB_CLIENT = None
-_MONGODB_CONNECTION = None
+_APP_GLOBAL_STATE = None
 
 
-def init_db():
-    global _MONGODB_CLIENT, _MONGODB_CONNECTION
+def init_db(
+    mongo_url=None,
+    database=None,
+    app_global_state=None
+):
+    global _APP_GLOBAL_STATE
 
-    _MONGODB_CLIENT = AsyncIOMotorClient(config.MONGO_URL)
-    _MONGODB_CONNECTION = _MONGODB_CLIENT[config.MONGO_DB]
+    mongo_url = mongo_url or config.MONGO_URL
+    database = database or config.MONGO_DB
+
+    mongodb_client = AsyncIOMotorClient(mongo_url)
+    mongodb_connection = mongodb_client[database]
+
+    if app_global_state:
+        _APP_GLOBAL_STATE = app_global_state
+        app_global_state.mongodb_client = mongodb_client
+        app_global_state.mongodb_connection = mongodb_connection
+
+    return (mongodb_client, mongodb_connection)
 
 
 def get_db():
-    if _MONGODB_CONNECTION is None:
-        init_db()
+    mongodb_connection = _APP_GLOBAL_STATE.mongodb_connection
 
-    return _MONGODB_CONNECTION
+    if mongodb_connection is None:
+        raise RuntimeWarning("DB not initialized with a global state.")
+
+    return mongodb_connection
 
 
 def get_collection(collection: str):

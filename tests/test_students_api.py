@@ -10,13 +10,13 @@ pytestmark = pytest.mark.anyio
     "payload, status_code",
     (
         (
-            {"name": "Corn", "desc": "Corn on the cob"},
+            {"name": "Sample student name"},
             status.HTTP_201_CREATED,
         ),
     ),
 )
 
 async def test_add_document(client: AsyncClient, payload: dict, status_code: int):
-    response = await client.post("/api/v1/vegs", json=payload)
+    response = await client.post("/api/students", json=payload)
     assert response.status_code == status_code
     assert ObjectId.is_valid(response.json()["id"])

@@ -66,5 +66,5 @@ requirements_dev: ## Refresh requirements.txt from pipfile.lock
 
 # Testing scripts
 
-# test: ## Run project tests
-# 	docker-compose run --rm web pytest -vv
+test: ## Run project tests
+	docker-compose run --rm dev pytest -vv
